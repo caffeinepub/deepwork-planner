@@ -27,7 +27,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   CalendarDays,
   Check,
@@ -36,7 +35,6 @@ import {
   Pencil,
   Plus,
   Tag,
-  Target,
   Trash2,
   X,
 } from "lucide-react";
@@ -44,6 +42,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import type { Entity__3 } from "../backend.d.ts";
+import BubbleCanvas from "../components/BubbleCanvas";
 import CategoryBadge from "../components/CategoryBadge";
 import PriorityBadge from "../components/PriorityBadge";
 import RichTextEditor from "../components/RichTextEditor";
@@ -85,10 +84,10 @@ const PRIORITIES = ["High", "Medium", "Low"];
 function formatDate(iso: string): string {
   if (!iso) return "";
   try {
-    return new Date(iso).toLocaleDateString("en-US", {
+    const date = new Date(iso + (iso.length === 7 ? "-01" : ""));
+    return date.toLocaleDateString("en-US", {
       year: "numeric",
-      month: "short",
-      day: "numeric",
+      month: "long",
     });
   } catch {
     return iso;
@@ -163,10 +162,6 @@ export default function MasterPlan() {
     }
     return Array.from(tagSet);
   }, [goals]);
-
-  const filtered = (goals ?? []).filter(
-    (g) => filter === "All" || g.category === filter,
-  );
 
   // ---- Detail modal handlers ----
   const openDetail = (goal: Entity__3) => {
@@ -406,7 +401,7 @@ export default function MasterPlan() {
         <div>
           <h1 className="text-2xl font-bold">Master Plan</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Your long-term goals and ambitions
+            Your goal universe — drag bubbles to arrange, click to explore
           </p>
         </div>
         <Button
@@ -439,80 +434,24 @@ export default function MasterPlan() {
         ))}
       </div>
 
-      {/* Goal Cards Grid */}
+      {/* Bubble Canvas */}
       {isLoading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {[1, 2, 3, 4, 5, 6].map((i) => (
-            <Skeleton key={i} className="h-40" />
-          ))}
-        </div>
-      ) : filtered.length === 0 ? (
-        <div
-          className="text-center py-16"
-          data-ocid="master_plan.goals.empty_state"
-        >
-          <Target className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
-          <p className="text-sm text-muted-foreground">
-            No goals yet. Start by adding your first goal.
-          </p>
-          <Button
-            onClick={openAdd}
-            className="mt-4 gradient-primary text-white border-0"
-            data-ocid="master_plan.create_first.button"
-          >
-            <Plus className="h-4 w-4 mr-1" /> Create Goal
-          </Button>
-        </div>
+        <BubbleCanvas
+          goals={[]}
+          getProgress={() => 0}
+          getMilestoneInfo={() => ({ total: 0, completed: 0 })}
+          onGoalClick={openDetail}
+          activeFilter={filter}
+          loading
+        />
       ) : (
-        <div
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
-          data-ocid="master_plan.goals.list"
-        >
-          <AnimatePresence>
-            {filtered.map((goal, i) => {
-              const progress = getProgress(goal.id);
-              const ms = getMilestoneInfo(goal);
-              return (
-                <motion.div
-                  key={goal.id}
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ delay: i * 0.05, duration: 0.25 }}
-                  data-ocid={`master_plan.goals.item.${i + 1}`}
-                  onClick={() => openDetail(goal)}
-                  className="group cursor-pointer rounded-2xl bg-card border border-white/10 shadow-lg p-5 flex flex-col gap-3 transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_0_24px_rgba(139,92,246,0.2)] hover:border-white/20 select-none"
-                >
-                  {/* Title */}
-                  <h3 className="font-semibold text-sm leading-snug line-clamp-2 text-foreground">
-                    {goal.title}
-                  </h3>
-
-                  {/* Badges */}
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <CategoryBadge category={goal.category} />
-                    <PriorityBadge priority={goal.priority} />
-                  </div>
-
-                  {/* Progress bar */}
-                  <div className="space-y-1">
-                    <ProgressBar value={progress} />
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-muted-foreground">
-                        {progress}% complete
-                      </span>
-                      {ms.total > 0 && (
-                        <span className="text-xs text-muted-foreground">
-                          {ms.completed}/{ms.total} milestones
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </AnimatePresence>
-        </div>
+        <BubbleCanvas
+          goals={goals ?? []}
+          getProgress={getProgress}
+          getMilestoneInfo={getMilestoneInfo}
+          onGoalClick={openDetail}
+          activeFilter={filter}
+        />
       )}
 
       {/* ---- Goal Detail Modal ---- */}
@@ -613,7 +552,7 @@ export default function MasterPlan() {
                       <div className="flex items-center gap-2">
                         <CalendarDays className="h-4 w-4 text-muted-foreground" />
                         <Input
-                          type="date"
+                          type="month"
                           value={editForm.deadline}
                           onChange={(e) =>
                             setEditForm((p) => ({
@@ -1053,7 +992,7 @@ export default function MasterPlan() {
                   Final Deadline
                 </Label>
                 <Input
-                  type="date"
+                  type="month"
                   value={addForm.deadline}
                   onChange={(e) =>
                     setAddForm((p) => ({ ...p, deadline: e.target.value }))

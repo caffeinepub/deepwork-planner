@@ -115,7 +115,7 @@ export default function MonthlyPlanner() {
   const [taskForm, setTaskForm] = useState<TaskForm>(emptyTask());
   const [deleteTaskId, setDeleteTaskId] = useState<string | null>(null);
   const [createPlanModal, setCreatePlanModal] = useState(false);
-  const [planLinkedGoalId, setPlanLinkedGoalId] = useState("");
+  const [planLinkedGoalId, setPlanLinkedGoalId] = useState("none");
   const [deletePlanConfirm, setDeletePlanConfirm] = useState(false);
 
   const { data: plans, isLoading: loadingPlans } = useMonthPlans();
@@ -178,11 +178,11 @@ export default function MonthlyPlanner() {
         year,
         month,
         title: `${MONTH_NAMES[month - 1]} ${year}`,
-        linkedGoalId: planLinkedGoalId,
+        linkedGoalId: planLinkedGoalId === "none" ? "" : planLinkedGoalId,
       });
       toast.success("Month plan created");
       setCreatePlanModal(false);
-      setPlanLinkedGoalId("");
+      setPlanLinkedGoalId("none");
     } catch {
       toast.error("Failed to create plan");
     }
@@ -196,9 +196,11 @@ export default function MonthlyPlanner() {
         year,
         month,
         title: currentPlan.title,
-        linkedGoalId: goalId,
+        linkedGoalId: goalId === "none" ? "" : goalId,
       });
-      toast.success(goalId ? "Goal linked" : "Goal unlinked");
+      toast.success(
+        goalId && goalId !== "none" ? "Goal linked" : "Goal unlinked",
+      );
     } catch {
       toast.error("Failed to update plan");
     }
@@ -578,7 +580,7 @@ export default function MonthlyPlanner() {
                   <SelectValue placeholder="No goal linked" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">No goal linked</SelectItem>
+                  <SelectItem value="none">No goal linked</SelectItem>
                   {(goals ?? []).map((g) => (
                     <SelectItem key={g.id} value={g.id}>
                       {g.title}
@@ -823,7 +825,7 @@ function LinkedGoalBanner({
             <SelectValue placeholder="Change" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Unlink</SelectItem>
+            <SelectItem value="none">Unlink</SelectItem>
             {goals
               .filter((g) => g.id !== goal.id)
               .map((g) => (

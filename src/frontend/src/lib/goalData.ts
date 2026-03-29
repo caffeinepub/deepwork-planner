@@ -15,7 +15,7 @@ export interface GoalEnvelope {
   milestones: GoalMilestone[];
 }
 
-export const DEFAULT_GOAL_TEMPLATE = `<h2>Goal Overview</h2><ul><li>What is this goal about?</li></ul><h2>Key Objectives</h2><ul><li><input type="checkbox" data-checked="false"> Objective 1</li><li><input type="checkbox" data-checked="false"> Objective 2</li></ul><h2>Strategy</h2><ul><li>Step 1</li><li>Step 2</li></ul><h2>Notes</h2><ul><li>Additional thoughts</li></ul>`;
+export const DEFAULT_GOAL_TEMPLATE = `<h2>Goal Overview</h2><ul><li>What is this goal about?</li></ul><h2>Key Objectives</h2><ul><li><input type="checkbox" data-checked="false"> Objective 1</li><li><input type="checkbox" data-checked="false"> Objective 2</li></ul><h2>Strategy</h2><ul><li>Step 2</li></ul><h2>Notes</h2><ul><li></li></ul>`;
 
 export function parseGoalDescription(raw: string): GoalEnvelope {
   if (!raw || !raw.trim()) {
