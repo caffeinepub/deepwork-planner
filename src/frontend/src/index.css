@@ -1,0 +1,123 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  src: url("/assets/fonts/PlusJakartaSans.woff2") format("woff2");
+  font-display: swap;
+  font-weight: 100 900;
+}
+
+@layer base {
+  :root {
+    --radius: 0.75rem;
+    --background: 0.975 0.008 258;
+    --foreground: 0.18 0.018 258;
+    --card: 1 0 0;
+    --card-foreground: 0.18 0.018 258;
+    --popover: 1 0 0;
+    --popover-foreground: 0.18 0.018 258;
+    --primary: 0.565 0.215 262;
+    --primary-foreground: 1 0 0;
+    --secondary: 0.94 0.025 262;
+    --secondary-foreground: 0.565 0.215 262;
+    --muted: 0.95 0.01 258;
+    --muted-foreground: 0.55 0.015 260;
+    --accent: 0.93 0.03 262;
+    --accent-foreground: 0.565 0.215 262;
+    --destructive: 0.65 0.22 25;
+    --destructive-foreground: 1 0 0;
+    --border: 0.922 0.012 260;
+    --input: 0.922 0.012 260;
+    --ring: 0.565 0.215 262;
+    /* Pastel chart colors */
+    --chart-1: 0.565 0.215 262;
+    --chart-2: 0.76 0.12 186;
+    --chart-3: 0.66 0.18 290;
+    --chart-4: 0.68 0.22 345;
+    --chart-5: 0.78 0.17 78;
+    --sidebar: 0.98 0.006 258;
+    --sidebar-foreground: 0.18 0.018 258;
+    --sidebar-primary: 0.565 0.215 262;
+    --sidebar-primary-foreground: 1 0 0;
+    --sidebar-accent: 0.93 0.03 262;
+    --sidebar-accent-foreground: 0.565 0.215 262;
+    --sidebar-border: 0.922 0.012 260;
+    --sidebar-ring: 0.565 0.215 262;
+    /* Pastel accents */
+    --teal: 0.76 0.12 186;
+    --purple: 0.66 0.18 290;
+    --pink: 0.68 0.22 345;
+    --amber: 0.78 0.17 78;
+  }
+
+  .dark {
+    --background: 0.145 0.018 260;
+    --foreground: 0.97 0.005 258;
+    --card: 0.2 0.022 260;
+    --card-foreground: 0.97 0.005 258;
+    --popover: 0.22 0.022 260;
+    --popover-foreground: 0.97 0.005 258;
+    --primary: 0.6 0.215 262;
+    --primary-foreground: 1 0 0;
+    --secondary: 0.26 0.03 262;
+    --secondary-foreground: 0.8 0.15 262;
+    --muted: 0.24 0.022 260;
+    --muted-foreground: 0.68 0.012 260;
+    --accent: 0.28 0.03 262;
+    --accent-foreground: 0.8 0.15 262;
+    --destructive: 0.65 0.22 25;
+    --destructive-foreground: 1 0 0;
+    --border: 1 0 0 / 10%;
+    --input: 1 0 0 / 12%;
+    --ring: 0.6 0.215 262;
+    --chart-1: 0.6 0.215 262;
+    --chart-2: 0.76 0.12 186;
+    --chart-3: 0.66 0.18 290;
+    --chart-4: 0.68 0.22 345;
+    --chart-5: 0.78 0.17 78;
+    --sidebar: 0.17 0.02 260;
+    --sidebar-foreground: 0.97 0.005 258;
+    --sidebar-primary: 0.6 0.215 262;
+    --sidebar-primary-foreground: 1 0 0;
+    --sidebar-accent: 0.26 0.03 262;
+    --sidebar-accent-foreground: 0.8 0.15 262;
+    --sidebar-border: 1 0 0 / 10%;
+    --sidebar-ring: 0.6 0.215 262;
+  }
+
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+    font-family: "Plus Jakarta Sans", sans-serif;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer utilities {
+  .gradient-primary {
+    background: linear-gradient(
+      135deg,
+      oklch(var(--primary)),
+      oklch(var(--purple))
+    );
+  }
+  .gradient-text {
+    background: linear-gradient(
+      135deg,
+      oklch(var(--primary)),
+      oklch(var(--purple))
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .card-hover {
+    @apply transition-all duration-200 hover:shadow-md hover:-translate-y-0.5;
+  }
+}
